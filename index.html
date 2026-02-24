@@ -1,0 +1,122 @@
+<div class="calculator-container">
+    <h2>Subscription Drain Calculator</h2>
+    <label>Monthly Subscription Spend ($)</label>
+    <input type="number" id="monthlySub" placeholder="e.g. 50">
+    
+    <label>Investment Horizon (Years)</label>
+    <select id="years">
+        <option value="10">10 Years</option>
+        <option value="20">20 Years</option>
+        <option value="30">30 Years</option>
+    </select>
+    
+    <button onclick="displayResults()">Calculate My Loss</button>
+
+    <div id="results" style="margin-top:20px; display:none;">
+        <p>Total Paid: <strong id="paid"></strong></p>
+        <p style="color:red;">Total Wealth Lost: <strong id="wealth"></strong></p>
+        </div>
+</div>
+
+<script>
+function displayResults() {
+    const sub = document.getElementById('monthlySub').value;
+    const yrs = document.getElementById('years').value;
+    const res = calculateSubDrain(sub, yrs);
+    
+    document.getElementById('paid').innerText = '$' + res.totalPaid;
+    document.getElementById('wealth').innerText = '$' + res.wealthLost;
+    document.getElementById('results').style.display = 'block';
+}
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Wealth Drain Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <div class="bg-indigo-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold italic">SubDrain.ai</h1>
+            <p class="text-indigo-100 text-sm opacity-90">What is your "Netflix habit" actually costing you?</p>
+        </div>
+
+        <div class="p-8 space-y-6">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Total Monthly Subs ($)</label>
+                <input type="number" id="monthlySub" value="50" class="w-full p-4 bg-slate-100 rounded-xl border-none focus:ring-2 focus:ring-indigo-500 text-xl font-bold outline-none transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Time Horizon (Years)</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="updateYears(10, this)" class="year-btn py-2 rounded-lg bg-slate-200 hover:bg-indigo-100 transition-colors font-medium">10y</button>
+                    <button onclick="updateYears(20, this)" class="year-btn py-2 rounded-lg bg-slate-200 hover:bg-indigo-100 transition-colors font-medium">20y</button>
+                    <button onclick="updateYears(30, this)" class="year-btn py-2 rounded-lg bg-indigo-600 text-white font-medium">30y</button>
+                </div>
+            </div>
+
+            <button onclick="displayResults()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-95">
+                Calculate My Wealth Loss
+            </button>
+
+            <div id="results" class="hidden animate-fade-in space-y-4 pt-4">
+                <div class="h-px bg-slate-100 w-full"></div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500 text-sm">Total Cash Paid:</span>
+                    <span id="paid" class="font-bold text-slate-800 text-lg"></span>
+                </div>
+
+                <div class="p-4 bg-red-50 rounded-2xl border border-red-100 text-center">
+                    <p class="text-red-600 text-xs font-bold uppercase tracking-widest mb-1">Total Wealth Lost</p>
+                    <h2 id="wealth" class="text-3xl font-black text-red-700"></h2>
+                    <p class="text-red-400 text-[10px] mt-2 leading-tight">*Calculated at 7% avg. market return</p>
+                </div>
+
+                <div class="w-full h-32 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 text-xs text-center p-4 italic">
+                    [ High-Value Ad Placement for Investing Apps & Savings Accounts ]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedYears = 30;
+
+        function updateYears(val, btn) {
+            selectedYears = val;
+            document.querySelectorAll('.year-btn').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white');
+                b.classList.add('bg-slate-200');
+            });
+            btn.classList.add('bg-indigo-600', 'text-white');
+            btn.classList.remove('bg-slate-200');
+        }
+
+        function displayResults() {
+            const monthlyAmount = parseFloat(document.getElementById('monthlySub').value);
+            const annualReturn = 0.07;
+            const months = selectedYears * 12;
+            const monthlyRate = annualReturn / 12;
+
+            const totalPaid = monthlyAmount * months;
+            const wealthLost = monthlyAmount * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+
+            document.getElementById('paid').innerText = '$' + totalPaid.toLocaleString();
+            document.getElementById('wealth').innerText = '$' + Math.round(wealthLost).toLocaleString();
+            
+            const resDiv = document.getElementById('results');
+            resDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
